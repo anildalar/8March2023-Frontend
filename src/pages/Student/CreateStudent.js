@@ -6,7 +6,6 @@ export default function CreateStudent() {
     return (
         <>
             <div className="container">
-
                 <h1 className="text-center mt-5">Create Student</h1>
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -30,7 +29,9 @@ export default function CreateStudent() {
                     </Button>
                 </Form>
                 <br />
+
                 <hr />
+                
                 <br />
                 <Table striped bordered hover>
                     <thead>
@@ -51,7 +52,7 @@ export default function CreateStudent() {
                             </td>
                         </tr>
                     </tbody>
-                    </Table>
+                </Table>
             </div>
         </>
     )
