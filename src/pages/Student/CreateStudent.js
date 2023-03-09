@@ -1,8 +1,62 @@
-import React from 'react'
+//1 Import Area
+import React, { useEffect, useState } from 'react'
 import { Button, Form, Table } from 'react-bootstrap'
 
-export default function CreateStudent() {
 
+//2. Defination area
+
+function CreateStudent() {
+    //2.1 Hooks Area
+    //let teacher='';
+    const [teacher,setTeacher] = useState([]);
+    //useSomething() will a hook function
+    //useEffect(cbfn,Arr);
+    useEffect(()=>{
+        // I want to call the get all teacher api
+        fetch(`http://localhost:1337/api/teachers`,{
+            method:"GET"
+        })
+        .then(res=> res.json())
+        .then((data)=>{
+            console.log(data.data);
+            setTeacher(data.data)
+            //set/ the hook varaible 
+        })  
+        .catch(()=>{
+
+        });
+    },[]);
+
+    //2.2 Function Defination Area
+    let createStudent = ()=>{
+        //alert("OKOKOKOKJOK");
+        let payload = {
+            "data": {
+              "name": document.getElementById('student_name').value,
+              "teachers": [parseInt(document.getElementById('teacher').value)]
+            }
+        }
+
+        //Our payload is ready to send to the server
+        console.log(payload);
+
+        fetch(`http://localhost:1337/api/students`,{
+            method:"POST",
+            headers:{
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify(payload)
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            alert("Student Inserted Succesfully");
+            console.log(data);
+        })
+        .catch();
+    }
+
+
+    //2.3 Return Statement
     return (
         <>
             <div className="container">
@@ -10,21 +64,24 @@ export default function CreateStudent() {
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Select Teacher</Form.Label>
-                        <Form.Select aria-label="Default select example">
-                            <option>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                        <Form.Select id="teacher" aria-label="Default select example" multiple>
+                            {
+                                teacher.map((cv,idx,arr)=>{
+                                    console.log(cv);
+                                    return <option key={idx} value={cv.id}>{cv.attributes.name}</option>
+                                })
+                            }
+                            
                         </Form.Select>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Student Name</Form.Label>
-                        <Form.Control type="text" placeholder="Enter name" />
+                        <Form.Control id="student_name" type="text" placeholder="Enter name" />
                         <Form.Text className="text-muted">
                         
                         </Form.Text>
                     </Form.Group>
-                    <Button variant="primary" type="submit">
+                    <Button variant="primary" type="button" onClick={()=>{ createStudent()  }}>
                         Submit
                     </Button>
                 </Form>
@@ -57,3 +114,8 @@ export default function CreateStudent() {
         </>
     )
 }
+
+
+//3. Export Area
+
+export default CreateStudent;
