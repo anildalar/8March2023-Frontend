@@ -13,7 +13,7 @@ function CreateStudent() {
     //useSomething() will a hook function
     //useEffect(cbfn,Arr);
     useEffect(()=>{
-        fetch(`http://localhost:1337/api/students`,{
+        fetch(`http://localhost:1337/api/students?populate=*`,{
             method: 'GET',
         })
         .then(res=>res.json())
@@ -42,8 +42,8 @@ function CreateStudent() {
 
     //2.2 Function Defination Area
     let createStudent = ()=>{
-        console.log(document.getElementById('teacher').value);
-        alert("OKOKOKOKJOK");
+        //console.log(document.getElementById('teacher').value);
+       // alert("OKOKOKOKJOK");
         let payload = {
             "data": {
               "name": document.getElementById('student_name').value,
@@ -53,7 +53,7 @@ function CreateStudent() {
 
         //Our payload is ready to send to the server
         console.log(payload);
-        /*
+       
         fetch(`http://localhost:1337/api/students`,{
             method:"POST",
             headers:{
@@ -64,10 +64,11 @@ function CreateStudent() {
         .then(res=>res.json())
         .then(data=>{
             alert("Student Inserted Succesfully");
+            window.location.reload();
             console.log(data);
         })
         .catch();
-        */
+        
     }
     
     let deleteStudent = (e)=>{
@@ -102,7 +103,7 @@ function CreateStudent() {
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Select Teacher</Form.Label>
-                        <Form.Select id="teacher" name="teacher[]" aria-label="Default select example" multiple>
+                        <Form.Select id="teacher" name="teacher[]" aria-label="Default select example">
                             {
                                 teacher.map((cv,idx,arr)=>{
                                     console.log(cv);
@@ -132,7 +133,8 @@ function CreateStudent() {
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>StudentName</th>
+                            <th>Student Name</th>
+                            <th>Teacher Name</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -142,6 +144,7 @@ function CreateStudent() {
                                 return  <tr>
                                             <td>{cv.id}</td>
                                             <td>{cv.attributes.name}</td>
+                                            <td>{cv.attributes.teachers.data[0].attributes.name}</td>
                                             <td>
                                                 <Button className="btn btn-sm me-1 btn-success">View</Button>
                                                 <Button className="btn btn-sm me-1 btn-primary">Edit</Button>
