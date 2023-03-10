@@ -2,23 +2,36 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Form, Table } from 'react-bootstrap'
 
-
+let surname='dollor';
 //2. Defination area
 
 function CreateStudent() {
     //2.1 Hooks Area
     //let teacher='';
     const [teacher,setTeacher] = useState([]);
+    const [students,setStudents] = useState([]);
     //useSomething() will a hook function
     //useEffect(cbfn,Arr);
     useEffect(()=>{
+        fetch(`http://localhost:1337/api/students`,{
+            method: 'GET',
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            let name2='anil';
+            console.log('Student --->>>>>',data.data);
+            //students = data.data;
+            setStudents(data.data);
+            
+        })
+        .catch()
         // I want to call the get all teacher api
         fetch(`http://localhost:1337/api/teachers`,{
             method:"GET"
         })
         .then(res=> res.json())
         .then((data)=>{
-            console.log(data.data);
+            console.log('Teacher --->>>>>',data.data);
             setTeacher(data.data)
             //set/ the hook varaible 
         })  
@@ -29,7 +42,8 @@ function CreateStudent() {
 
     //2.2 Function Defination Area
     let createStudent = ()=>{
-        //alert("OKOKOKOKJOK");
+        console.log(document.getElementById('teacher').value);
+        alert("OKOKOKOKJOK");
         let payload = {
             "data": {
               "name": document.getElementById('student_name').value,
@@ -39,7 +53,7 @@ function CreateStudent() {
 
         //Our payload is ready to send to the server
         console.log(payload);
-
+        /*
         fetch(`http://localhost:1337/api/students`,{
             method:"POST",
             headers:{
@@ -53,18 +67,42 @@ function CreateStudent() {
             console.log(data);
         })
         .catch();
+        */
     }
+    
+    let deleteStudent = (e)=>{
+        let tr = e.target.closest('tr');
+        console.log(tr.querySelector('td:first-child').innerHTML);
+        let sid = tr.querySelector('td:first-child').innerHTML;
 
+        let x = window.confirm('Do you really want to delete student');
+        console.log(typeof x);
+        if(x === true){
+            //alert('Lets call the delete API');
+            fetch(`http://localhost:1337/api/students/${sid}`,{
+                method:"DELETE"
+            })
+            .then(res=>res.json())
+            .then(data=>{
+                console.log(data);
+                tr.remove();
+                alert('Studetn Deleted SUccessfully');
+            })
+            .catch(err=>err)
+        }
+
+       // alert('OKOKKOK');
+    }
 
     //2.3 Return Statement
     return (
         <>
             <div className="container">
-                <h1 className="text-center mt-5">Create Student</h1>
+                <h1 className="text-center mt-5">Create Student {surname}</h1>
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Select Teacher</Form.Label>
-                        <Form.Select id="teacher" aria-label="Default select example" multiple>
+                        <Form.Select id="teacher" name="teacher[]" aria-label="Default select example" multiple>
                             {
                                 teacher.map((cv,idx,arr)=>{
                                     console.log(cv);
@@ -99,15 +137,20 @@ function CreateStudent() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Mark</td>
-                            <td>
-                                <Button className="btn btn-sm me-1 btn-success">View</Button>
-                                <Button className="btn btn-sm me-1 btn-primary">Edit</Button>
-                                <Button className="btn btn-sm me-1 btn-danger">Delete</Button>
-                            </td>
-                        </tr>
+                        {
+                            students.map((cv,idx,arr)=>{
+                                return  <tr>
+                                            <td>{cv.id}</td>
+                                            <td>{cv.attributes.name}</td>
+                                            <td>
+                                                <Button className="btn btn-sm me-1 btn-success">View</Button>
+                                                <Button className="btn btn-sm me-1 btn-primary">Edit</Button>
+                                                <Button id={`sid${cv.id}`} className="btn btn-sm me-1 btn-danger" onClick={(e)=>{ deleteStudent(e) }}>Delete</Button>
+                                            </td>
+                                        </tr>
+                                    })
+                        }
+                        
                     </tbody>
                 </Table>
             </div>
