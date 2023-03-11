@@ -13,6 +13,9 @@ Edit Teachers
 Teachers
 
 Students
+			SchoolA
+			SchoolB
+					
 
 			TeacherA 
 							StudentA
@@ -24,3 +27,8 @@ Students
 							StudentC
 							StudentE
 							StudentG
+
+
+
+id			StudentName			TeachersName
+1         StudentA           TeacherA,TeacherB,..;..

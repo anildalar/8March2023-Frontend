@@ -10,6 +10,7 @@ function CreateStudent() {
     //let teacher='';
     const [teacher,setTeacher] = useState([]);
     const [students,setStudents] = useState([]);
+    const [teacherName,setTeacherName] = useState([]);
     //useSomething() will a hook function
     //useEffect(cbfn,Arr);
     useEffect(()=>{
@@ -64,7 +65,18 @@ function CreateStudent() {
         .then(res=>res.json())
         .then(data=>{
             alert("Student Inserted Succesfully");
-            window.location.reload();
+            //window.location.reload();
+            document.querySelector('table#myTable > tbody').innerHTML +=   `<tr>
+                                                                                <td>1</td>
+                                                                                <td>${document.getElementById('student_name').value}</td>
+                                                                                <td>${teacherName}</td>
+                                                                                <td>
+                                                                                    <Button class="btn btn-sm me-1 btn-success">View</Button>
+                                                                                    <Button class="btn btn-sm me-1 btn-primary">Edit</Button>
+                                                                                    <Button id="" class="btn btn-sm me-1 btn-danger">Delete</Button>
+                                                                                </td>
+                                                                            </tr>`;
+            
             console.log(data);
         })
         .catch();
@@ -95,6 +107,16 @@ function CreateStudent() {
        // alert('OKOKKOK');
     }
 
+    let handleChange = (e)=>{
+        //alert(e.target.value); //returns the selected value
+        //alert(e.target.innerHTML); //returns the entire select with all the options
+        var options = e.target.getElementsByTagName("option");
+        //alert(options);
+        var optionHTML = options[e.target.selectedIndex].innerHTML;  
+        //alert(optionHTML); //this is what I want, but it works now
+        setTeacherName(options[e.target.selectedIndex].innerHTML);
+    }
+
     //2.3 Return Statement
     return (
         <>
@@ -103,7 +125,7 @@ function CreateStudent() {
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Select Teacher</Form.Label>
-                        <Form.Select id="teacher" name="teacher[]" aria-label="Default select example">
+                        <Form.Select id="teacher" name="teacher[]" aria-label="Default select example" onChange={(e)=>{ handleChange(e) }}>
                             {
                                 teacher.map((cv,idx,arr)=>{
                                     console.log(cv);
@@ -129,7 +151,7 @@ function CreateStudent() {
                 <hr />
                 
                 <br />
-                <Table striped bordered hover>
+                <Table striped bordered hover id="myTable"> 
                     <thead>
                         <tr>
                             <th>#</th>
@@ -140,11 +162,17 @@ function CreateStudent() {
                     </thead>
                     <tbody>
                         {
-                            students.map((cv,idx,arr)=>{
+                            students.map((cv,idx,arr)=>{ 
                                 return  <tr>
                                             <td>{cv.id}</td>
                                             <td>{cv.attributes.name}</td>
-                                            <td>{cv.attributes.teachers.data[0].attributes.name}</td>
+                                            <td>{
+                                                   cv.attributes.teachers.data.map((cv2,idx2,arr2)=>{
+                                                        return cv2.attributes.name;
+                                                    }).toString()
+                                                }
+                                                
+                                            </td>
                                             <td>
                                                 <Button className="btn btn-sm me-1 btn-success">View</Button>
                                                 <Button className="btn btn-sm me-1 btn-primary">Edit</Button>
