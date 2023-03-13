@@ -8,6 +8,7 @@ let surname='dollor';
 function CreateStudent() {
     //2.1 Hooks Area
     //let teacher='';
+    const [teachersIds, setTeachersIds] = useState([]);
     const [teacher,setTeacher] = useState([]);
     const [students,setStudents] = useState([]);
     const [teacherName,setTeacherName] = useState([]);
@@ -48,7 +49,7 @@ function CreateStudent() {
         let payload = {
             "data": {
               "name": document.getElementById('student_name').value,
-              "teachers": [parseInt(document.getElementById('teacher').value)]
+              "teachers": teachersIds
             }
         }
 
@@ -107,25 +108,30 @@ function CreateStudent() {
        // alert('OKOKKOK');
     }
 
-    let handleChange = (e)=>{
-        //alert(e.target.value); //returns the selected value
-        //alert(e.target.innerHTML); //returns the entire select with all the options
-        var options = e.target.getElementsByTagName("option");
-        //alert(options);
-        var optionHTML = options[e.target.selectedIndex].innerHTML;  
-        //alert(optionHTML); //this is what I want, but it works now
-        setTeacherName(options[e.target.selectedIndex].innerHTML);
+    
+
+    const handleSelect = function(selectedItems) {
+        const teacherids = [];
+        for (let i=0; i<selectedItems.length; i++) {
+            teacherids.push(parseInt(selectedItems[i].value));
+        }
+        setTeachersIds(teacherids);
+    }
+
+    let anil = ()=>{
+        alert(teachersIds);
     }
 
     //2.3 Return Statement
     return (
         <>
             <div className="container">
+                <button onClick={()=>{ anil() }}>My test Button</button>
                 <h1 className="text-center mt-5">Create Student {surname}</h1>
                 <Form>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-3">
                         <Form.Label>Select Teacher</Form.Label>
-                        <Form.Select id="teacher" name="teacher[]" aria-label="Default select example" onChange={(e)=>{ handleChange(e) }}>
+                        <Form.Select multiple={true} value={teachersIds} id="teacher" name="teacher[]" aria-label="Default select example" onChange={(e)=> { handleSelect(e.target.selectedOptions)} }>
                             {
                                 teacher.map((cv,idx,arr)=>{
                                     console.log(cv);
@@ -135,7 +141,7 @@ function CreateStudent() {
                             
                         </Form.Select>
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-3">
                         <Form.Label>Student Name</Form.Label>
                         <Form.Control id="student_name" type="text" placeholder="Enter name" />
                         <Form.Text className="text-muted">
@@ -163,7 +169,7 @@ function CreateStudent() {
                     <tbody>
                         {
                             students.map((cv,idx,arr)=>{ 
-                                return  <tr>
+                                return  <tr key={idx}>
                                             <td>{cv.id}</td>
                                             <td>{cv.attributes.name}</td>
                                             <td>{
